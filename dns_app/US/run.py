@@ -1,8 +1,9 @@
-from urllib import request
+import urllib
 from flask import Flask
 from flask import request
 import time
 import socket
+
 app = Flask(__name__)
 
 
@@ -24,9 +25,16 @@ def fib():
     NAME={}'''.format(host).encode()
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(query, (as_ip, int(as_port)))
-    response = sock.recvfrom(2048)[0]
-        
-    return args, 200
+    fib_ip = sock.recvfrom(2048)[0].decode().split('\n')[2].split("=")[1]
+    print("fib IP = ",fib_ip)
+    query_addr = 'http://'+fib_ip+':'+fs_port+'/fibonacci?number='+number
+    
+    with urllib.request.urlopen(query_addr) as response:
+        answer = response.read()
+       
+
+            
+    return str(int(answer)), 200
 
 app.run(host='0.0.0.0',
         port=8080,

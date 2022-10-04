@@ -12,16 +12,18 @@ while True:
     msg, addr = sock.recvfrom(2048)
     message = msg.decode()
     query = message.split('\n')
+    print('query received at AS is\n',query)
     if len(query) > 2:
         name = query[1].split('=')[1]
         value = query[2].split('=')[1]
-        dict[name] = value
+        records[name] = value
+        print('setting records[',name,'] to be ', value)
     else:
         name = query[1].split('=')[1]
-        value = dict[name]
+        value = records[name]
         response = '''TYPE=A
         NAME={}
         VALUE={}
         TTL=10'''.format(name, value)
         sock.sendto(response.encode(), addr)
-        print(response)
+        print("response is ", response)
